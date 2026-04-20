@@ -1,11 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<title>Gestion Vente Voiture</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #f5f5f5;
+}
+
+h1 {
+    color: #333;
+}
+
+.form, .search {
+    margin: 20px;
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+}
+
+button {
+    padding: 10px;
+    background: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: darkgreen;
+}
+
+table {
+    margin: auto;
+    border-collapse: collapse;
+    width: 80%;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+
+th {
+    background: #333;
+    color: white;
+}
+
+.delete {
+    background: red;
+}
+</style>
+
 </head>
 <body>
-    
+
+<h1>🚗 Gestion Vente de Voitures</h1>
+
+<div class="form">
+    <input type="text" id="marque" placeholder="Marque">
+    <input type="text" id="modele" placeholder="Modèle">
+    <input type="number" id="prix" placeholder="Prix ($)">
+    <button onclick="ajouterVoiture()">Ajouter</button>
+</div>
+
+<div class="search">
+    <input type="text" id="recherche" placeholder="Rechercher..." onkeyup="rechercherVoiture()">
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Marque</th>
+            <th>Modèle</th>
+            <th>Prix</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="listeVoitures"></tbody>
+</table>
+
+<script>
+let voitures = JSON.parse(localStorage.getItem("voitures")) || [];
+
+function afficherVoitures() {
+    const liste = document.getElementById("listeVoitures");
+    liste.innerHTML = "";
+
+    voitures.forEach((v, index) => {
+        liste.innerHTML += `
+            <tr>
+                <td>${v.marque}</td>
+                <td>${v.modele}</td>
+                <td>${v.prix} $</td>
+                <td>
+                    <button class="delete" onclick="supprimerVoiture(${index})">Supprimer</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    localStorage.setItem("voitures", JSON.stringify(voitures));
+}
+
+function ajouterVoiture() {
+    const marque = document.getElementById("marque").value;
+    const modele = document.getElementById("modele").value;
+    const prix = document.getElementById("prix").value;
+
+    if (marque && modele && prix) {
+        voitures.push({ marque, modele, prix });
+        afficherVoitures();
+
+        // reset champs
+        document.getElementById("marque").value = "";
+        document.getElementById("modele").value = "";
+        document.getElementById("prix").value = "";
+    }
+}
+
+function supprimerVoiture(index) {
+    voitures.splice(index, 1);
+    afficherVoitures();
+}
+
+function rechercherVoiture() {
+    const filtre = document.getElementById("recherche").value.toLowerCase();
+    const lignes = document.querySelectorAll("#listeVoitures tr");
+
+    lignes.forEach(ligne => {
+        ligne.style.display = ligne.innerText.toLowerCase().includes(filtre)
+            ? ""
+            : "none";
+    });
+}
+
+afficherVoitures();
+</script>
+
 </body>
-</html>l
+</html>
